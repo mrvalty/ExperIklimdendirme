@@ -34,23 +34,23 @@ namespace ExperIklimdendirmeApp.Controllers
 
         public ActionResult GetCustomerList()
         {
-            var _customers = _context.Customers.Where(x => x.IsActive == 1).ToList();
-            //var query = (from cus in _context.Customers
-            //             join qrcus in _context.QRCustomers on cus.Id equals qrcus.CustomerId
-            //             where cus.IsActive == 1
-            //             select new QRCustomerViewModel()
-            //             {
-            //                 Id = cus.Id,
-            //                 Address = cus.Address,
-            //                 Explanation = cus.Explanation,
-            //                 FaultReason = cus.FaultReason,
-            //                 FirstName = cus.FirstName,
-            //                 LastName = cus.LastName,
-            //                 PhoneNumber = cus.PhoneNumber
 
-            //             }).ToList();
+            var query = (from cus in _context.Customers
+                         where cus.IsActive == 1
+                         select new QRCustomerViewModel()
+                         {
+                             Id = cus.Id,
+                             Address = cus.Address,
+                             Explanation = cus.Explanation,
+                             FaultReason = cus.FaultReason,
+                              UsedMaterial=cus.UsedMaterial,
+                             FirstName = cus.FirstName,
+                             LastName = cus.LastName,
+                             PhoneNumber = cus.PhoneNumber
 
-            return View(_customers);
+                         }).ToList();
+
+            return View(query);
         }
 
         public ActionResult AddCustomer()
