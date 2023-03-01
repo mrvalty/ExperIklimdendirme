@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "GetCustomerList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using ExperIklimdendirmeApp.Models.ViewModel
+@model List<QRCustomerViewModel>
+
+<body>
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Müşteri Listesi</h6>
+                @*@if (TempData["Message"] != null)
+                {
+                    @Html.Partial("_mesaj", (string)TempData["Message"])}*@
+
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Ad</th>
+                                <th>Soyad</th>
+                                <th>Telefon</th>
+                                <th>Adres</th>
+                                <th>ArızaSebebi</th>
+                                <th>KullanılanMalzeme</th>
+                                <th>Açıklama</th>
+                                <th>Durum</th>
+                                <th>Durum</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.FirstName</td>
+                                    <td>@item.LastName</td>
+                                    <td>@item.PhoneNumber</td>
+                                    <td>@item.Address</td>
+                                    <td>@item.FaultReason</td>
+                                    <td>@item.UsedMaterial</td>
+                                    <td>@item.Explanation</td>
+                                    <td><button class="btn btn-danger"><a href="/Home/CustomerDeleteDetail/@item.Id" style="color:white;text-decoration:none;font-size:13px;">SİL</a></button></td>
+                                    <td><button class="btn btn-success"><a href="/Home/CustomerUpdateDetail/@item.Id" style="color: white; text-decoration: none;">GÜNCELLE</a></button></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        $(function () {
+                toastr.success("@TempData["Message"]");
+                toastr.options = {
+                    "timeOut": "10000",
+                    "showDuration": "10000",
+                    "progressBar": true
+                }
+           
+        });
+    </script>
+</body>
