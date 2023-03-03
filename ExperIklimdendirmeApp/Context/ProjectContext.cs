@@ -20,6 +20,8 @@ namespace ExperIklimdendirmeApp.Context
         public DbSet<Customer> Customers { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<QRCustomer> QRCustomers { get; set; }
+        public DbSet<CalendarEvents> CalendarEvents { get; set; }
+
 
     }
 }

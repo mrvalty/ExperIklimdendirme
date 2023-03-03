@@ -5,6 +5,8 @@ using Microsoft.Win32;
 using QRCoder;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -20,7 +22,6 @@ namespace ExperIklimdendirmeApp.Controllers
     public class HomeController : Controller
     {
         ProjectContext _context = new ProjectContext();
-
         public ActionResult Index()
         {
             List<Customer> _customers = _context.Customers.Where(x=>x.IsActive==1).ToList();
@@ -181,14 +182,144 @@ namespace ExperIklimdendirmeApp.Controllers
             Bitmap _bitmap = new Bitmap(base64String);
             return _bitmap;
         }
-       
 
-        //public void QRGetDetails(int id)
-        //{
-        //    Customer customer = _context.Customers.Find(id);
-        //    var text = customer.FirstName + " " + customer.LastName + " " + (Environment.NewLine) + "" + customer.PhoneNumber + " " + customer.Address;
-        //    ViewBag.text = text;
-        //}
+        //Takvim Ekleme
+
+        public JsonResult GetCalendarEvents(string start, string end,string title, string baslangicTarihi, string bitisTarihi)
+        {
+            List<CalendarEvents> eventItems = new List<CalendarEvents>();
+            try
+            {
+                SqlConnection con = new SqlConnection(@"server=.;database=exprDB1; user=admndb1;password=ANkara12345//.*;");
+                con.Open();
+                var query = $@"select * from CalendarEvents where start >={start}";
+
+                SqlCommand command = new SqlCommand(query, con);
+                DataTable dt = new DataTable();
+                SqlDataAdapter da = new SqlDataAdapter(command);
+                da.Fill(dt);
+
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    DataRow dr = dt.Rows[i];
+                    CalendarEvents item = new CalendarEvents();
+
+                    item.id = int.Parse(dr["id"].ToString());
+                    item.title = dr["title"].ToString();
+                    item.start = string.Format("{0:s}", dr["start"]);
+                    item.end = string.Format("{0:s}", dr["end"]);
+                    item.color = dr["color"].ToString();
+                    item.IsActive = 1;
+
+                    eventItems.Add(item);
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            
+            return Json(eventItems, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult AddOrEditItem(CalendarEvents item)
+        {
+            ProjectContext connect = new ProjectContext();
+            try
+            {
+                CalendarEvents _event = new CalendarEvents();
+                _event.title = item.title;
+                _event.start = item.start;
+                _event.end = item.end;
+                _event.IsActive = 1;
+                _context.CalendarEvents.Add(_event);
+                _context.SaveChanges();
+
+                return Json(_event, JsonRequestBehavior.AllowGet);
+
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public JsonResult UpdateItemDate(int id, string startDate, string endDate,string title)
+        {
+            try
+            {
+                SqlConnection con = new SqlConnection(@"server=.;database=exprDB1; user=admndb1;password=ANkara12345//.*;");
+                con.Open();
+                List<SqlParameter> param = new List<SqlParameter>();
+                param.Add(new SqlParameter("@id", id));
+                param.Add(new SqlParameter("@startdate", startDate));
+                param.Add(new SqlParameter("@enddate", endDate));
+                param.Add(new SqlParameter("@title", title));
+
+                var query = $@"update CalendarEvents set start=@startdate, end=@enddate, title=@title  where id =@id";
+
+                SqlCommand command = new SqlCommand(query, con);
+                //var query = (from c in _context.CalendarEvents
+                //             where c.id == id
+                //             select new
+                //             {
+                //                 c
+                //             }).ToList();
+                //if (query.Count != 0)
+                //{
+                //    foreach (var item in query)
+                //    {
+                //        item.c.title = title;
+                //        item.c.start = startDate;
+                //        item.c.end = endDate;
+
+                //        _context.CalendarEvents.Add(item.c);
+                //    }
+
+                //}
+
+                //_context.SaveChanges();
+
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+        public JsonResult GetCalendarItemEvent(int id)
+        {
+            try
+            {
+                CalendarEventsViewModel res = new CalendarEventsViewModel();
+                var query = (from c in _context.CalendarEvents
+                             where c.id == id
+                             select new CalendarEventsViewModel
+                             {
+                                 title = c.title,
+                                 start = DateTime.Parse(Convert.ToString(c.start)).ToString("dd.MM.yyyy"),
+                                 end = DateTime.Parse(Convert.ToString(c.end)).ToString("dd.MM.yyyy"),
+                                 calendarid = c.id
+                             }).ToList();
+                if(query.Count != 0)
+                {
+                    res.title = query[0].title;
+                    res.start = query[0].start;
+                    res.end = query[0].end;
+                    res.calendarid = query[0].calendarid;
+                    res.sonuc = 1;
+                }
+                
+                return Json(res, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
 
     }
 }
