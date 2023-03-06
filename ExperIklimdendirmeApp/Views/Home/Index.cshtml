@@ -61,15 +61,15 @@
                                     </div>
                                 </div>
                                 @*<div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="event_name">Müşteriler</label>
-                                        <select class="form-control m-input m-input--square" id="musteriler" name="musteriler">
-                                            <option value="0">Seçiniz..</option>
-                                            <option value="1">Merve</option>
-                                            <option value="2">Samet</option>
-                                        </select>
-                                    </div>
-                                </div>*@
+                                        <div class="form-group">
+                                            <label for="event_name">Müşteriler</label>
+                                            <select class="form-control m-input m-input--square" id="musteriler" name="musteriler">
+                                                <option value="0">Seçiniz..</option>
+                                                <option value="1">Merve</option>
+                                                <option value="2">Samet</option>
+                                            </select>
+                                        </div>
+                                    </div>*@
                             </div>
                             <div class="row">
                                 <div class="col-sm-6">
@@ -95,10 +95,11 @@
         </div>
 
         <div class="modal fade" id="event_entry_modal2" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <input type="hidden" asp-for="Id" />
             <div class="modal-dialog modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalLabel">Randevu Ekranı</h5><input type="text" name="calendarid" id="calendarid" class="form-control" style="display:none">
+                        <h5 class="modal-title" id="modalLabel">Randevu Ekranı</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
@@ -106,22 +107,18 @@
                     <div class="modal-body">
                         <div class="img-container">
                             <div class="row">
-                                <div class="col-sm-12">
+                                <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="event_name">Randevu İsmi</label>
                                         <input type="text" name="title1" id="title1" class="form-control" placeholder="Randevu İsmi Giriniz">
                                     </div>
                                 </div>
-                                @*<div class="col-sm-6">
+                                <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label for="event_name">Müşteriler</label>
-                                        <select class="form-control m-input m-input--square" id="musteriler" name="musteriler">
-                                            <option value="0">Seçiniz..</option>
-                                            <option value="1">Merve</option>
-                                            <option value="2">Samet</option>
-                                        </select>
+                                        <label for="event_name">Takvim Id</label>
+                                        <input type="text" name="calendarid" id="calendarid" class="form-control">
                                     </div>
-                                </div>*@
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-6">
@@ -139,14 +136,29 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" onclick="meetingUpdate()">Kaydet</button>
+                        <div class="img-container">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-danger" onclick="meetingDelete(calendarid.value)">Sil</button>
+                                    </div>
+                                </div>
+                                <div class="col-sm-10">
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-primary" onclick="meetingUpdate(calendarid.value)">Kaydet</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
-   
+
     <!-- Content Row -->
 </div>
 <!-- /.container-fluid -->

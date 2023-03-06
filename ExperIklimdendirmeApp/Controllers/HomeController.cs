@@ -22,9 +22,13 @@ namespace ExperIklimdendirmeApp.Controllers
     public class HomeController : Controller
     {
         ProjectContext _context = new ProjectContext();
+        private SqlConnection connection = null;
+
+        private string connectionString = @"server=.;database=exprDB1; user=admndb1;password=ANkara12345//.*;";
+
         public ActionResult Index()
         {
-            List<Customer> _customers = _context.Customers.Where(x=>x.IsActive==1).ToList();
+            List<Customer> _customers = _context.Customers.Where(x => x.IsActive == 1).ToList();
             var _customercount = _customers.Count();
             ViewBag.CountCustomer = _customercount;
 
@@ -44,7 +48,7 @@ namespace ExperIklimdendirmeApp.Controllers
                              Address = cus.Address,
                              Explanation = cus.Explanation,
                              FaultReason = cus.FaultReason,
-                              UsedMaterial=cus.UsedMaterial,
+                             UsedMaterial = cus.UsedMaterial,
                              FirstName = cus.FirstName,
                              LastName = cus.LastName,
                              PhoneNumber = cus.PhoneNumber
@@ -130,7 +134,7 @@ namespace ExperIklimdendirmeApp.Controllers
             if (_customer != null)
             {
                 var active = _customer.IsActive = 0;
-                
+
             }
             _context.SaveChanges();
             TempData["Message"] = $"{_customer.FirstName} {_customer.LastName} İsimli Müşteri Kaydı Silindi.";
@@ -185,7 +189,7 @@ namespace ExperIklimdendirmeApp.Controllers
 
         //Takvim Ekleme
 
-        public JsonResult GetCalendarEvents(string start, string end,string title, string baslangicTarihi, string bitisTarihi)
+        public JsonResult GetCalendarEvents(string start, string end, string title, string baslangicTarihi, string bitisTarihi)
         {
             List<CalendarEvents> eventItems = new List<CalendarEvents>();
             try
@@ -220,7 +224,7 @@ namespace ExperIklimdendirmeApp.Controllers
 
                 throw ex;
             }
-            
+
             return Json(eventItems, JsonRequestBehavior.AllowGet);
         }
         public JsonResult AddOrEditItem(CalendarEvents item)
@@ -239,51 +243,84 @@ namespace ExperIklimdendirmeApp.Controllers
                 return Json(_event, JsonRequestBehavior.AllowGet);
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
         }
-
-        public JsonResult UpdateItemDate(int id, string startDate, string endDate,string title)
+        public JsonResult UpdateItemDate(int? eventid, string startDate, string endDate, string title)
         {
             try
             {
+                
                 SqlConnection con = new SqlConnection(@"server=.;database=exprDB1; user=admndb1;password=ANkara12345//.*;");
                 con.Open();
                 List<SqlParameter> param = new List<SqlParameter>();
-                param.Add(new SqlParameter("@id", id));
+                param.Add(new SqlParameter("@id", eventid));
                 param.Add(new SqlParameter("@startdate", startDate));
                 param.Add(new SqlParameter("@enddate", endDate));
                 param.Add(new SqlParameter("@title", title));
 
-                var query = $@"update CalendarEvents set start=@startdate, end=@enddate, title=@title  where id =@id";
+                var query = $@"update CalendarEvents set start=@startdate, [end]=@enddate, title=@title  where id =@id";
 
-                SqlCommand command = new SqlCommand(query, con);
-                //var query = (from c in _context.CalendarEvents
-                //             where c.id == id
-                //             select new
-                //             {
-                //                 c
-                //             }).ToList();
-                //if (query.Count != 0)
+                //SqlCommand command = new SqlCommand(query, con);
+                //CalendarEvents _update = _context.CalendarEvents.First(x => x.id == eventid);
+                //var query = from events in _context.CalendarEvents
+                //             where events.id == eventid
+                //             select events;
+
+                //foreach (var item in query)
                 //{
-                //    foreach (var item in query)
-                //    {
-                //        item.c.title = title;
-                //        item.c.start = startDate;
-                //        item.c.end = endDate;
-
-                //        _context.CalendarEvents.Add(item.c);
-                //    }
-
+                //    item.title = title;
+                //    item.start = startDate;
+                //    item.end = endDate;
                 //}
 
                 //_context.SaveChanges();
 
+                RunSqlCommand(query, param);
+
+                return Json(true,JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        public JsonResult DeleteItemDate(int? eventid)
+        {
+            try
+            {
+
+                SqlConnection con = new SqlConnection(@"server=.;database=exprDB1; user=admndb1;password=ANkara12345//.*;");
+                con.Open();
+                List<SqlParameter> param = new List<SqlParameter>();
+                param.Add(new SqlParameter("@id", eventid));
+
+                var query = $@"Delete  CalendarEvents where id =@id";
+
+                //SqlCommand command = new SqlCommand(query, con);
+                //CalendarEvents _update = _context.CalendarEvents.First(x => x.id == eventid);
+                //var query = from events in _context.CalendarEvents
+                //             where events.id == eventid
+                //             select events;
+
+                //foreach (var item in query)
+                //{
+                //    item.title = title;
+                //    item.start = startDate;
+                //    item.end = endDate;
+                //}
+
+                //_context.SaveChanges();
+
+                RunSqlCommand(query, param);
+
                 return Json(true, JsonRequestBehavior.AllowGet);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -303,7 +340,7 @@ namespace ExperIklimdendirmeApp.Controllers
                                  end = DateTime.Parse(Convert.ToString(c.end)).ToString("dd.MM.yyyy"),
                                  calendarid = c.id
                              }).ToList();
-                if(query.Count != 0)
+                if (query.Count != 0)
                 {
                     res.title = query[0].title;
                     res.start = query[0].start;
@@ -311,13 +348,41 @@ namespace ExperIklimdendirmeApp.Controllers
                     res.calendarid = query[0].calendarid;
                     res.sonuc = 1;
                 }
-                
+
                 return Json(res, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+
+        }
+
+
+        public void RunSqlCommand(string sql, List<SqlParameter> param = null)
+        {
+            try
+            {
+                OpenConnection();
+                SqlCommand cmd = connection.CreateCommand();
+                cmd.CommandText = sql;
+                if (param != null)
+                    cmd.Parameters.AddRange(param.ToArray());
+                cmd.CommandType = CommandType.Text;
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public void OpenConnection()
+        {
+            connection = new SqlConnection(connectionString);
+
+            if (connection.State != ConnectionState.Open)
+                connection.Open();
 
         }
 

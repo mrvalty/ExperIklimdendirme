@@ -137,9 +137,8 @@ function getEvents(selectedItem) {
     });
 }
 
-function meetingUpdate() {
+function meetingUpdate(calendarid) {
 
-    var _id = $("#calendarid").val();
     var _title = $("#title1").val();
     var _baslangicTarihi = $("#baslangicTarihi1").val();
     var _bitisTarihi = $("#bitisTarihi1").val();
@@ -162,10 +161,10 @@ function meetingUpdate() {
         url: "/Home/UpdateItemDate/",
         data: JSON.stringify
             ({
-                id : _id,
+                eventid: calendarid,
                 title: _title,
-                start: _baslangicTarihi,
-                end: _bitisTarihi
+                startDate: _baslangicTarihi,
+                endDate: _bitisTarihi
 
             }),
 
@@ -182,7 +181,53 @@ function meetingUpdate() {
         success: function () {
         },
         complete: function () {
+            $('#event_entry_modal2').modal('hide');
         }
     });
 
+}
+
+function meetingDelete(calendarid) {
+    swal({
+        buttons: {
+            cancel: "İPTAL",
+            confirm: "TAMAM"
+        },
+        title: "UYARI",
+        html: true,
+        text: "Bu randevuyu silmek istiyor musunuz?",
+        icon: "info",
+        dangerMode: true
+    })
+        .then((willDelete) => {
+            if (willDelete) {
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/DeleteItemDate",
+                    data: JSON.stringify
+                        ({
+                            eventid: calendarid,
+
+                        }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    beforeSend: function () {
+
+                    },
+                    error: function (request, status, error) {
+                        
+                    },
+                    success: function (msg) {
+
+                    },
+                    complete: function () {
+
+                        $('#event_entry_modal2').modal('hide');
+                    }
+                });
+
+            }
+
+        });
 }
