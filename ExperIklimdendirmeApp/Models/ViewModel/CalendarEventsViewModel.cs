@@ -11,6 +11,8 @@ namespace ExperIklimdendirmeApp.Models.ViewModel
         public string start { get; set; }
         public string end { get; set; }
         public int calendarid { get; set; }
+        public int customerid { get; set; }
+        
 
     }
 }

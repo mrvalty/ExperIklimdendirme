@@ -8,6 +8,7 @@ namespace ExperIklimdendirmeApp.Models
     public class CalendarEvents
     {
         public int id { get; set; }
+        public int Customerid { get; set; }
         public string title { get; set; }
         public string start { get; set; }
         public string end { get; set; }

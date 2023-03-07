@@ -281,6 +281,7 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\ViewModel\BaseViewModel.cs" />
     <Compile Include="Models\ViewModel\CalendarEventsViewModel.cs" />
+    <Compile Include="Models\ViewModel\CustomerListViewModel.cs" />
     <Compile Include="Models\ViewModel\QRCustomerViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

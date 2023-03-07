@@ -189,14 +189,14 @@ namespace ExperIklimdendirmeApp.Controllers
 
         //Takvim Ekleme
 
-        public JsonResult GetCalendarEvents(string start, string end, string title, string baslangicTarihi, string bitisTarihi)
+        public JsonResult GetCalendarEvents(string start, string end)
         {
             List<CalendarEvents> eventItems = new List<CalendarEvents>();
             try
             {
                 SqlConnection con = new SqlConnection(@"server=.;database=exprDB1; user=admndb1;password=ANkara12345//.*;");
                 con.Open();
-                var query = $@"select * from CalendarEvents where start >={start}";
+                var query = $@"select * from CalendarEvents";
 
                 SqlCommand command = new SqlCommand(query, con);
                 DataTable dt = new DataTable();
@@ -237,10 +237,12 @@ namespace ExperIklimdendirmeApp.Controllers
                 _event.start = item.start;
                 _event.end = item.end;
                 _event.IsActive = 1;
+                _event.Customerid = item.Customerid;
                 _context.CalendarEvents.Add(_event);
                 _context.SaveChanges();
 
                 return Json(_event, JsonRequestBehavior.AllowGet);
+
 
             }
             catch (Exception ex)
@@ -248,39 +250,41 @@ namespace ExperIklimdendirmeApp.Controllers
                 throw ex;
             }
         }
-        public JsonResult UpdateItemDate(int? eventid, string startDate, string endDate, string title)
+        public JsonResult UpdateItemDate(int? eventid, string startDate, string endDate, string title,int customerid)
         {
             try
             {
-                
+
                 SqlConnection con = new SqlConnection(@"server=.;database=exprDB1; user=admndb1;password=ANkara12345//.*;");
                 con.Open();
                 List<SqlParameter> param = new List<SqlParameter>();
                 param.Add(new SqlParameter("@id", eventid));
-                param.Add(new SqlParameter("@startdate", startDate));
-                param.Add(new SqlParameter("@enddate", endDate));
+                param.Add(new SqlParameter("@startdate", string.Format("{0:s}", startDate)));
+                param.Add(new SqlParameter("@enddate", string.Format("{0:s}", endDate)));
                 param.Add(new SqlParameter("@title", title));
+                param.Add(new SqlParameter("@customerid", customerid));
 
-                var query = $@"update CalendarEvents set start=@startdate, [end]=@enddate, title=@title  where id =@id";
+                var query = $@"update CalendarEvents set start=@startdate, [end]=@enddate, title=@title,Customerid =@customerid  where id =@id";
 
                 //SqlCommand command = new SqlCommand(query, con);
-                //CalendarEvents _update = _context.CalendarEvents.First(x => x.id == eventid);
+
                 //var query = from events in _context.CalendarEvents
-                //             where events.id == eventid
-                //             select events;
+                //            where events.id == eventid
+                //            select events;
 
                 //foreach (var item in query)
                 //{
                 //    item.title = title;
                 //    item.start = startDate;
                 //    item.end = endDate;
+                //    item.Customerid = customerid;
                 //}
 
                 //_context.SaveChanges();
 
                 RunSqlCommand(query, param);
 
-                return Json(true,JsonRequestBehavior.AllowGet);
+                return Json(true, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -336,9 +340,12 @@ namespace ExperIklimdendirmeApp.Controllers
                              select new CalendarEventsViewModel
                              {
                                  title = c.title,
+                                 // start= DateTime.Parse(Convert.ToString(c.start)).ToString(),
+                                 // end= Convert.ToString(DateTime.Parse(c.end)),
                                  start = DateTime.Parse(Convert.ToString(c.start)).ToString("dd.MM.yyyy"),
                                  end = DateTime.Parse(Convert.ToString(c.end)).ToString("dd.MM.yyyy"),
-                                 calendarid = c.id
+                                 calendarid = c.id,
+                                 customerid = c.Customerid
                              }).ToList();
                 if (query.Count != 0)
                 {
@@ -346,6 +353,7 @@ namespace ExperIklimdendirmeApp.Controllers
                     res.start = query[0].start;
                     res.end = query[0].end;
                     res.calendarid = query[0].calendarid;
+                    res.customerid = query[0].customerid;
                     res.sonuc = 1;
                 }
 
@@ -386,5 +394,24 @@ namespace ExperIklimdendirmeApp.Controllers
 
         }
 
+
+        public JsonResult GetCustomersList()
+        {
+            List<CustomerListViewModel> customres = new List<CustomerListViewModel>();
+            var query = (from cus in _context.Customers
+                         where cus.IsActive == 1
+                         select new CustomerListViewModel()
+                         {
+                             customerid = cus.Id,
+                             Name = cus.FirstName + cus.LastName
+                         }).ToList();
+
+            if (query.Count != 0)
+            {
+                customres.AddRange(query);
+            }
+            return Json(customres, JsonRequestBehavior.AllowGet);
+
+        }
     }
 }

@@ -1,8 +1,8 @@
 ﻿
 $(document).ready(function () {
     GetCalendarEvents();
-    $('.input-group.date').datepicker({ format: "dd.mm.yyyy" });
-    $('#baslangicTarihi1').datepicker({ format: "dd.mm.yyyy" });
+    getCustomersList();
+//    getCustomerSelectItem();
 });
 
 //$(function () {
@@ -51,8 +51,9 @@ function meetingSave() {
     var _title = $("#title").val();
     var _baslangicTarihi = $("#baslangicTarihi").val();
     var _bitisTarihi = $("#bitisTarihi").val();
+    var _musteriid = $("#customerList").val();
 
-    if (title == "" || baslangicTarihi == "" || bitisTarihi == "") {
+    if (_title == "" || _baslangicTarihi == "" || _bitisTarihi == "" || _musteriid == "") {
 
         $(function () {
             toastr.warning("Lütfen Tüm Alanları Giriniz.");
@@ -73,7 +74,8 @@ function meetingSave() {
 
                 title: _title,
                 start: _baslangicTarihi,
-                end: _bitisTarihi
+                end: _bitisTarihi,
+                Customerid: _musteriid
 
             }),
 
@@ -85,20 +87,32 @@ function meetingSave() {
 
         },
         error: function (request, status, error) {
-
-            UyariMesajiVer('Sistemsel bir hata oluştu');
+            $(function () {
+                toastr.error("Sistem bir hata oluştu.");
+                toastr.options = {
+                    "timeOut": "10000",
+                    "showDuration": "10000",
+                    "progressBar": true
+                }
+            });
         },
         success: function () {
+
         },
         complete: function () {
+            //$('#event_entry_modal').modal('hide');
+            window.location.href = "/Home/Index";
         }
     });
 
 }
 
 function getEvents(selectedItem) {
-
+    getCustomerSelectItem();
     var id = selectedItem.id;
+
+    //$("#elementId :selected").text(); // The text content of the selected option
+    //$("#elementId").val(); // The value of the selected option
 
     $.ajax({
         type: "POST",
@@ -120,19 +134,19 @@ function getEvents(selectedItem) {
 
         },
         success: function (msg) {
-            
+
             $('#title1').val(msg.title);
             $('#baslangicTarihi1').val(msg.start);
             $('#bitisTarihi1').val(msg.end);
             $('#calendarid').val(msg.calendarid);
-
+            $('#customerid').val(msg.customerid);
+            
+        },
+        complete: function () {
             $('#event_entry_modal2').modal({
                 show: true,
 
             });
-        },
-        complete: function () {
-
         }
     });
 }
@@ -142,6 +156,7 @@ function meetingUpdate(calendarid) {
     var _title = $("#title1").val();
     var _baslangicTarihi = $("#baslangicTarihi1").val();
     var _bitisTarihi = $("#bitisTarihi1").val();
+    var _customerid = $('#customerid').val();
 
     //if (title == "" || baslangicTarihi == "" || bitisTarihi == "") {
 
@@ -164,7 +179,8 @@ function meetingUpdate(calendarid) {
                 eventid: calendarid,
                 title: _title,
                 startDate: _baslangicTarihi,
-                endDate: _bitisTarihi
+                endDate: _bitisTarihi,
+                customerid: _customerid
 
             }),
 
@@ -181,7 +197,7 @@ function meetingUpdate(calendarid) {
         success: function () {
         },
         complete: function () {
-            $('#event_entry_modal2').modal('hide');
+            window.location.href = "/Home/Index";
         }
     });
 
@@ -216,14 +232,14 @@ function meetingDelete(calendarid) {
 
                     },
                     error: function (request, status, error) {
-                        
+
                     },
                     success: function (msg) {
 
                     },
                     complete: function () {
 
-                        $('#event_entry_modal2').modal('hide');
+                        window.location.href = "/Home/Index";
                     }
                 });
 
@@ -231,3 +247,88 @@ function meetingDelete(calendarid) {
 
         });
 }
+
+function getCustomersList() {
+    $.ajax({
+        type: "POST",
+        url: "/Home/GetCustomersList/",
+        data: JSON.stringify
+            ({
+
+            }),
+
+        contentType: "application/json; charset=utf-8",
+
+        dataType: "json",
+
+        beforeSend: function () {
+
+        },
+        error: function (request, status, error) {
+
+
+        },
+        success: function (msg) {
+            var _dizi = msg;
+
+            var content = '';
+            content += "<option value='-1'>Seçiniz...</option>";
+            for (i = 0; i < _dizi.length; i++) {
+                content += "<option value='" + _dizi[i].customerid + "'>" + _dizi[i].Name + "</option>";
+                //alert(_dizi[i].FirstName);
+            }
+            $("#customerList").html(content);
+
+            //$('#event_entry_modal2').modal({
+            //    show: true,
+
+            //});
+        },
+        complete: function () {
+
+        }
+    });
+}
+
+function getCustomerSelectItem() {
+    $.ajax({
+        type: "POST",
+        url: "/Home/GetCustomersList/",
+        data: JSON.stringify
+            ({
+
+            }),
+
+        contentType: "application/json; charset=utf-8",
+
+        dataType: "json",
+
+        beforeSend: function () {
+
+        },
+        error: function (request, status, error) {
+
+
+        },
+        success: function (msg) {
+            var _dizi = msg;
+
+            var content = '';
+            content += "<option value='-1'>Seçiniz...</option>";
+            for (i = 0; i < _dizi.length; i++) {
+                content += "<option value='" + _dizi[i].customerid + "'>" + _dizi[i].Name + "</option>";
+                //alert(_dizi[i].FirstName);
+            }
+            $("#customerid").html(content);
+
+            //$('#event_entry_modal2').modal({
+            //    show: true,
+
+            //});
+        },
+        complete: function () {
+
+        }
+    });
+}
+

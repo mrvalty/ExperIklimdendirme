@@ -5,9 +5,9 @@ using System.Web;
 
 namespace ExperIklimdendirmeApp.Models.ViewModel
 {
-    public class BaseViewModel
+    public class CustomerListViewModel : BaseViewModel
     {
-        public int sonuc { get; set; }
-        public string message { get; set; }
+        public int customerid { get; set; }
+        public string Name { get; set; }
     }
 }
