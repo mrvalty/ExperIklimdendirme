@@ -34,7 +34,7 @@ function GetCalendarEvents() {
             right: 'month,agendaWeek,agendaDay'
         },
         dayClick: function (selectedDate) {
-            /*alert('clicked ' + date.format());*/
+            //alert('clicked ' + selectedDate.format());
             $('#event_entry_modal').modal("show");
         },
         editable: true,
