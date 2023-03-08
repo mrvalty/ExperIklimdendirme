@@ -254,7 +254,6 @@ namespace ExperIklimdendirmeApp.Controllers
         {
             try
             {
-
                 SqlConnection con = new SqlConnection(@"server=.;database=exprDB1; user=admndb1;password=ANkara12345//.*;");
                 con.Open();
                 List<SqlParameter> param = new List<SqlParameter>();
@@ -265,22 +264,6 @@ namespace ExperIklimdendirmeApp.Controllers
                 param.Add(new SqlParameter("@customerid", customerid));
 
                 var query = $@"update CalendarEvents set start=@startdate, [end]=@enddate, title=@title,Customerid =@customerid  where id =@id";
-
-                //SqlCommand command = new SqlCommand(query, con);
-
-                //var query = from events in _context.CalendarEvents
-                //            where events.id == eventid
-                //            select events;
-
-                //foreach (var item in query)
-                //{
-                //    item.title = title;
-                //    item.start = startDate;
-                //    item.end = endDate;
-                //    item.Customerid = customerid;
-                //}
-
-                //_context.SaveChanges();
 
                 RunSqlCommand(query, param);
 
@@ -342,8 +325,8 @@ namespace ExperIklimdendirmeApp.Controllers
                                  title = c.title,
                                  // start= DateTime.Parse(Convert.ToString(c.start)).ToString(),
                                  // end= Convert.ToString(DateTime.Parse(c.end)),
-                                 start = DateTime.Parse(Convert.ToString(c.start)).ToString("dd.MM.yyyy"),
-                                 end = DateTime.Parse(Convert.ToString(c.end)).ToString("dd.MM.yyyy"),
+                                 start = DateTime.Parse(Convert.ToString(c.start)).ToString("yyyy-MM-dd"),
+                                 end = DateTime.Parse(Convert.ToString(c.end)).ToString("yyyy-MM-dd"),
                                  calendarid = c.id,
                                  customerid = c.Customerid
                              }).ToList();

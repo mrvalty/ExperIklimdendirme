@@ -54,22 +54,19 @@
                     <div class="modal-body">
                         <div class="img-container">
                             <div class="row">
-                                <div class="col-sm-12">
+                                <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="event_name">Randevu İsmi</label>
                                         <input type="text" name="title" id="title" class="form-control" placeholder="Randevu İsmi Giriniz">
                                     </div>
                                 </div>
-                                @*<div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label for="event_name">Müşteriler</label>
-                                            <select class="form-control m-input m-input--square" id="musteriler" name="musteriler">
-                                                <option value="0">Seçiniz..</option>
-                                                <option value="1">Merve</option>
-                                                <option value="2">Samet</option>
-                                            </select>
-                                        </div>
-                                    </div>*@
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="event_name">Müşteriler</label>
+                                        <select class="form-control m-input m-input--square" id="customerList" name="customerList">
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-6">
@@ -99,7 +96,7 @@
             <div class="modal-dialog modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalLabel">Randevu Ekranı</h5>
+                        <h5 class="modal-title" id="modalLabel">Randevu Ekranı</h5><input type="text" name="calendarid" id="calendarid" class="form-control"style="display:none">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
@@ -115,8 +112,8 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label for="event_name">Takvim Id</label>
-                                        <input type="text" name="calendarid" id="calendarid" class="form-control">
+                                        <label for="event_name">Müşteri</label>
+                                        <select class="form-control m-input m-input--square" id="customerid" name="customerid"></select>
                                     </div>
                                 </div>
                             </div>
@@ -124,13 +121,13 @@
                                 <div class="col-sm-6">
                                     <div class="input-group date">
                                         <label for="event_start_date">Başlangıç Tarihi</label>
-                                        <input type="text" name="baslangicTarihi1" id="baslangicTarihi1" class="form-control" placeholder="dd.mm.yyyy">
+                                        <input type="text" name="baslangicTarihi1" id="baslangicTarihi1" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="input-group date">
                                         <label for="event_end_date">Bitiş Tarihi</label>
-                                        <input type="text" name="bitisTarihi1" id="bitisTarihi1" class="form-control" placeholder="dd.mm.yyyy">
+                                        <input type="text" name="bitisTarihi1" id="bitisTarihi1" class="form-control">
                                     </div>
                                 </div>
                             </div>
