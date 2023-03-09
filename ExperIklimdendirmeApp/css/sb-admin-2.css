@@ -11013,6 +11013,7 @@ a:focus {
     .topbar #sidebarToggleTop {
         height: 2.5rem;
         width: 2.5rem;
+        margin-left: 20px;
     }
 
         .topbar #sidebarToggleTop:hover {

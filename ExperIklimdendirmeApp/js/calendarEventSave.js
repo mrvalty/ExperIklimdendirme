@@ -35,7 +35,10 @@ function GetCalendarEvents() {
         },
         dayClick: function (selectedDate) {
             //alert('clicked ' + selectedDate.format());
+            $('#baslangicTarihi').val(selectedDate.format());
+            $('#bitisTarihi').val(selectedDate.format());
             $('#event_entry_modal').modal("show");
+            
         },
         editable: true,
         events: '/Home/GetCalendarEvents/',
