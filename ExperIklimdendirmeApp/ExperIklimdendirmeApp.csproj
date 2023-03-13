@@ -277,6 +277,7 @@
     </Compile>
     <Compile Include="Models\CalendarEvents.cs" />
     <Compile Include="Models\Customer.cs" />
+    <Compile Include="Models\Logs\LogsCalendarEvent.cs" />
     <Compile Include="Models\QRCustomer.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\ViewModel\BaseViewModel.cs" />
@@ -459,10 +460,12 @@
     <Content Include="js\chart-area-demo.js" />
     <Content Include="js\chart-pie-demo.js" />
     <Content Include="js\Chart.min.js" />
+    <Content Include="js\CustomerDelete.js" />
     <Content Include="js\datatables-demo.js" />
     <Content Include="js\jquery.easing.min.js" />
     <Content Include="js\jquery.min.js" />
     <Content Include="js\sb-admin-2.min.js" />
+    <Content Include="js\toastmessage.js" />
     <Content Include="Scripts\bootbox.js" />
     <Content Include="Scripts\bootbox.min.js" />
     <Content Include="bin\ExperIklimdendirmeApp.dll.config" />

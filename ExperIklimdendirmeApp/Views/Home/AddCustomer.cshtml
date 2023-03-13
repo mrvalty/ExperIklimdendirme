@@ -15,9 +15,9 @@
                     <h2>Yeni Müşteri Ekleme</h2>
                 </div>
                 <div class="col-lg-8">
-                    @*@if (TempData["Message"] != null)
+                    @if (TempData["Message"] != null)
                                     {
-                        @Html.Partial("_mesaj", (string)TempData["Message"])}*@
+                        @Html.Partial("_mesaj", (string)TempData["Message"])}
                 </div>
             </div>
         </div>
@@ -108,7 +108,7 @@
 
                                 <div style="display:flex;align-items:center;justify-content:center;width:145%;height:145%" class="form-group">
 
-                                    <button type="submit" id="addcustom" class="btn btn-primary">EKLE</button>
+                                    <button type="submit" id="addcustom" onclick="addcustomer()" class="btn btn-primary">EKLE</button>
 
                                 </div>
 
@@ -141,11 +141,11 @@
         </div>
     </div>}
 
-<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+@*<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>*@
 
-<script>
-        $(function () {
+@*<script>
+    $(function addcustomer() {
                 toastr.success("@TempData["Message"]");
                 toastr.options = {
                     "timeOut": "10000",
@@ -154,6 +154,6 @@
                 }
 
         });
-</script>
+</script>*@
 
 

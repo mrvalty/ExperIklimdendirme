@@ -14,9 +14,9 @@
         <div class="card shadow mb-4">
             <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">Müşteri Listesi</h6>
-                @*@if (TempData["Message"] != null)
+                @if (TempData["Message"] != null)
                 {
-                    @Html.Partial("_mesaj", (string)TempData["Message"])}*@
+                    @Html.Partial("_mesaj", (string)TempData["Message"])}
 
             </div>
             <div class="card-body">
@@ -49,7 +49,7 @@
                                     <td>@item.FaultReason</td>
                                     <td>@item.UsedMaterial</td>
                                     <td>@item.Explanation</td>
-                                    <td><button class="btn btn-danger"><a href="/Home/CustomerDeleteDetail/@item.Id" style="color:white;text-decoration:none;font-size:13px;">SİL</a></button></td>
+                                    <td><button class="btn btn-danger"><a onclick=customerDelete(@item.Id) style="color:white;text-decoration:none;font-size:13px;">SİL</a></button></td>
                                     <td><button class="btn btn-success"><a href="/Home/CustomerUpdateDetail/@item.Id" style="color: white; text-decoration: none;">GÜNCELLE</a></button></td>
                                 </tr>
                             }
@@ -60,15 +60,4 @@
         </div>
 
     </div>
-    <script>
-        $(function () {
-                toastr.success("@TempData["Message"]");
-                toastr.options = {
-                    "timeOut": "10000",
-                    "showDuration": "10000",
-                    "progressBar": true
-                }
-           
-        });
-    </script>
 </body>

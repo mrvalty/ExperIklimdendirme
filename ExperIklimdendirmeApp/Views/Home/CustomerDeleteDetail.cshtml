@@ -71,9 +71,15 @@
 
                                 <div style="display:flex;align-items:center;justify-content:center;width:145%;height:145%" class="form-group">
 
-                                    <button type="submit" class="btn btn-primary"><a style="color:white; text-decoration:none;" href="~/Home/CustomerDelete/@Model.Id">SİL</a></button>
+                                        <button type="submit" class="btn btn-primary"><a style="color:white; text-decoration:none;" onclick=customerDelete(@Model.Id)>SİL</a></button>
 
-                                </div>
+                                    </div>
+
+                                @*<div style="display:flex;align-items:center;justify-content:center;width:145%;height:145%" class="form-group">
+
+                                        <button type="submit" class="btn btn-primary"><a style="color:white; text-decoration:none;" href="~/Home/CustomerDelete/@Model.Id">SİL</a></button>
+
+                                    </div>*@
 
                             </div>
 

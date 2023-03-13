@@ -5,24 +5,6 @@ $(document).ready(function () {
 //    getCustomerSelectItem();
 });
 
-//$(function () {
-//    $('#calendar').fullCalendar({
-//        selectable: true,
-//        header: {
-//            left: 'prev,next today',
-//            center: 'title',
-//            right: 'month,agendaWeek,agendaDay'
-//        },
-//        dayClick: function (date) {
-//            alert('clicked ' + date.format());
-//        },
-//        select: function (startDate, endDate) {
-//            alert('selected ' + startDate.format() + ' to ' + endDate.format());
-//        }
-//    });
-
-//});
-
 function GetCalendarEvents() {
     $('#calendar').fullCalendar({
         selectable: true,

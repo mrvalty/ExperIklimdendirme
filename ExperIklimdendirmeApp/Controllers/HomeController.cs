@@ -1,5 +1,6 @@
 ﻿using ExperIklimdendirmeApp.Context;
 using ExperIklimdendirmeApp.Models;
+using ExperIklimdendirmeApp.Models.Logs;
 using ExperIklimdendirmeApp.Models.ViewModel;
 using Microsoft.Win32;
 using QRCoder;
@@ -24,7 +25,7 @@ namespace ExperIklimdendirmeApp.Controllers
         ProjectContext _context = new ProjectContext();
         private SqlConnection connection = null;
 
-        private string connectionString = @"server=.;database=exprDB1; user=admndb1;password=ANkara12345//.*;";
+        private string connectionString = @"server=104.247.162.242\\MSSQLSERVER2019;database=fuatomay_exprDB1; user=fuatomay_admndb1; password=ANkara12345//.*;";
 
         public ActionResult Index()
         {
@@ -127,9 +128,9 @@ namespace ExperIklimdendirmeApp.Controllers
             return View(_customer);
         }
 
-        public ActionResult CustomerDelete(int id)
+        public BaseViewModel CustomerDelete(int id)
         {
-
+            BaseViewModel _res = new BaseViewModel();
             Customer _customer = _context.Customers.Find(id);
             if (_customer != null)
             {
@@ -138,13 +139,14 @@ namespace ExperIklimdendirmeApp.Controllers
             }
             _context.SaveChanges();
             TempData["Message"] = $"{_customer.FirstName} {_customer.LastName} İsimli Müşteri Kaydı Silindi.";
-            //ViewBag.Message = "Müşteri Başarı ile Silindi";
-            return RedirectToAction("GetCustomerList", "Home");
+            return _res;
         }
 
         public void GetLastId()
         {
+            
             int lastid = _context.Customers.OrderBy(x => x.Id).Select(x => x.Id).Last();
+            
             lastid++;
             ViewBag.lastId = lastid;
 
@@ -194,7 +196,7 @@ namespace ExperIklimdendirmeApp.Controllers
             List<CalendarEvents> eventItems = new List<CalendarEvents>();
             try
             {
-                SqlConnection con = new SqlConnection(@"server=.;database=exprDB1; user=admndb1;password=ANkara12345//.*;");
+                SqlConnection con = new SqlConnection(@"server=104.247.162.242\\MSSQLSERVER2019;database=fuatomay_exprDB1; user=fuatomay_admndb1; password=ANkara12345//.*;");
                 con.Open();
                 var query = $@"select * from CalendarEvents";
 
@@ -241,6 +243,19 @@ namespace ExperIklimdendirmeApp.Controllers
                 _context.CalendarEvents.Add(_event);
                 _context.SaveChanges();
 
+
+                #region SaveLogs
+                LogsCalendarEvent _log = new LogsCalendarEvent();
+                _log.title = item.title;
+                _log.start = item.start;
+                _log.end = item.end;
+                _log.Customerid = item.Customerid;
+                _context.LogsCalendarEvent.Add(_log);
+                _context.SaveChanges();
+                #endregion
+
+
+
                 return Json(_event, JsonRequestBehavior.AllowGet);
 
 
@@ -254,7 +269,7 @@ namespace ExperIklimdendirmeApp.Controllers
         {
             try
             {
-                SqlConnection con = new SqlConnection(@"server=.;database=exprDB1; user=admndb1;password=ANkara12345//.*;");
+                SqlConnection con = new SqlConnection(@"server=104.247.162.242\\MSSQLSERVER2019;database=fuatomay_exprDB1; user=fuatomay_admndb1; password=ANkara12345//.*;");
                 con.Open();
                 List<SqlParameter> param = new List<SqlParameter>();
                 param.Add(new SqlParameter("@id", eventid));
@@ -266,6 +281,19 @@ namespace ExperIklimdendirmeApp.Controllers
                 var query = $@"update CalendarEvents set start=@startdate, [end]=@enddate, title=@title,Customerid =@customerid  where id =@id";
 
                 RunSqlCommand(query, param);
+
+
+                #region UpdateLogs
+                //List<SqlParameter> param1 = new List<SqlParameter>();
+                //param1.Add(new SqlParameter("@id", eventid));
+                //param1.Add(new SqlParameter("@startdate", string.Format("{0:s}", startDate)));
+                //param1.Add(new SqlParameter("@enddate", string.Format("{0:s}", endDate)));
+                //param1.Add(new SqlParameter("@title", title));
+                //param1.Add(new SqlParameter("@customerid", customerid));
+                //var query1 = $@"update LogsCalendarEvent set start=@startdate, [end]=@enddate, title=@title,Customerid =@customerid  where id =@id";
+
+                //RunSqlCommand(query1, param1);
+                #endregion
 
                 return Json(true, JsonRequestBehavior.AllowGet);
             }
@@ -281,7 +309,7 @@ namespace ExperIklimdendirmeApp.Controllers
             try
             {
 
-                SqlConnection con = new SqlConnection(@"server=.;database=exprDB1; user=admndb1;password=ANkara12345//.*;");
+                SqlConnection con = new SqlConnection(@"server=104.247.162.242\\MSSQLSERVER2019;database=fuatomay_exprDB1; user=fuatomay_admndb1; password=ANkara12345//.*;");
                 con.Open();
                 List<SqlParameter> param = new List<SqlParameter>();
                 param.Add(new SqlParameter("@id", eventid));

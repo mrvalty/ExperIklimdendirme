@@ -2,7 +2,17 @@
 
 
 @*<div class="alert alert-success text-center" style="width:50%; float:right;font-size:12px;" role="alert">
-    @Model
-</div>*@
+        @Model
+    </div>*@
 
-<span class="alert-success"> @Model</span>
+<script>
+    $(function () {
+        toastr.success("@Model");
+                    toastr.options = {
+                        "timeOut": "10000",
+                        "showDuration": "10000",
+                        "progressBar": true
+                    }
+
+            });
+</script>
