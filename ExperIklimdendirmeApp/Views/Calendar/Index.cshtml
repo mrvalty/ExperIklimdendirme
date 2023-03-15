@@ -1,0 +1,123 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div id="calendar"></div>
+
+    <div class="modal fade" id="event_entry_modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Randevu Ekranı</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="img-container">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="event_name">Randevu İsmi</label>
+                                    <input type="text" name="title" id="title" class="form-control" placeholder="Randevu İsmi Giriniz">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="event_name">Müşteriler</label>
+                                    <select class="form-control m-input m-input--square" id="customerList" name="customerList">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="event_start_date">Başlangıç Tarihi</label>
+                                    <input type="date" name="baslangicTarihi" id="baslangicTarihi" class="form-control onlydatepicker" placeholder="Başlangıç Tarihi Seçiniz">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="event_end_date">Bitiş Tarihi</label>
+                                    <input type="date" name="bitisTarihi" id="bitisTarihi" class="form-control" placeholder="Bitiş Tarihi Seçiniz">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="meetingSave()">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="event_entry_modal2" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <input type="hidden" asp-for="Id" />
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Randevu Ekranı</h5><input type="text" name="calendarid" id="calendarid" class="form-control" style="display:none">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="img-container">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="event_name">Randevu İsmi</label>
+                                    <input type="text" name="title1" id="title1" class="form-control" placeholder="Randevu İsmi Giriniz">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="event_name">Müşteri</label>
+                                    <select class="form-control m-input m-input--square" id="customerid" name="customerid"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="input-group date">
+                                    <label for="event_start_date">Başlangıç Tarihi</label>
+                                    <input type="date" name="baslangicTarihi1" id="baslangicTarihi1" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="input-group date">
+                                    <label for="event_end_date">Bitiş Tarihi</label>
+                                    <input type="date" name="bitisTarihi1" id="bitisTarihi1" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <div class="img-container">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-danger" onclick="meetingDelete(calendarid.value)">Sil</button>
+                                </div>
+                            </div>
+                            <div class="col-sm-10">
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-primary" onclick="meetingUpdate(calendarid.value)">Kaydet</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

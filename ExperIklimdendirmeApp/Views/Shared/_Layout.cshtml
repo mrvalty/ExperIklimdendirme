@@ -67,6 +67,18 @@
                     @Html.ActionLink("Yeni Müşteri Ekle", "AddCustomer", "Home", new { area = "" }, new { @style = "color:white;text-decoration:none;" })
                 </a>
             </li>
+
+            <hr class="sidebar-divider" style="margin-bottom:20px;margin-top:20px;">
+            <!-- Nav Item - Utilities Collapse Menu -->
+            <li class="nav-item">
+                <a href="#" data-toggle="collapse" style="color: white; margin-left: 15px;">
+                    <i class="fa-sharp fa-solid fa-users"></i>
+                    @Html.ActionLink("Randevu İşlemi", "Index", "Calendar", new { area = "" }, new { @style = "color:white;text-decoration:none;" })
+                </a>
+
+
+            </li>
+
             <hr class="sidebar-divider" style="margin-bottom:20px;margin-top:20px;">
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
@@ -204,7 +216,7 @@
     <script src="~/Scripts/toastr.js"></script>
 
     <!-- Takvim js scripts -->
-    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    @*<script src="~/Scripts/jquery-3.4.1.min.js"></script>*@
     <script src="~/Scripts/moment.min.js"></script>
     <script src="~/Scripts/moment-with-locales.min.js"></script>
     <script src="~/Scripts/fullcalendar/fullcalendar.min.js"></script>
