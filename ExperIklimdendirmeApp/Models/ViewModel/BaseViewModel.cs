@@ -9,5 +9,7 @@ namespace ExperIklimdendirmeApp.Models.ViewModel
     {
         public int sonuc { get; set; }
         public string message { get; set; }
+
+        public List<CalendarEventsViewModel> eventList { get; set; }
     }
 }

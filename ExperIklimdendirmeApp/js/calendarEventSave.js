@@ -1,11 +1,11 @@
 ﻿
 $(document).ready(function () {
-    GetCalendarEvents();
+    CalendarEvents();
     getCustomersList();
-//    getCustomerSelectItem();
+    //    getCustomerSelectItem();
 });
 
-function GetCalendarEvents() {
+function CalendarEvents() {
     $('#calendar').fullCalendar({
         selectable: true,
         lang: 'tr',
@@ -20,10 +20,35 @@ function GetCalendarEvents() {
             $('#baslangicTarihi').val(selectedDate.format());
             $('#bitisTarihi').val(selectedDate.format());
             $('#event_entry_modal').modal("show");
-            
+
         },
         editable: true,
-        events: '/Home/GetCalendarEvents/',
+
+        events: function (start, end, timezone, callback) {
+            $.ajax({
+                url: '/Calendar/GetCalendarEvents/',
+                type: "POST",
+                dataType: "JSON",
+
+                success: function (msg) {
+                    var events = [];
+
+                    $.each(msg, function (i, data) {
+                        events.push(
+                            {
+                                id : data.id,
+                                title: data.title,
+                                start: moment(data.start),
+                                end: moment(data.end)
+                            });
+                    });
+
+                    callback(events);
+                }
+            });
+        },
+
+
         eventClick: function (event, delta, revertFunc) {
             getEvents(event);
         }
@@ -53,7 +78,7 @@ function meetingSave() {
 
     $.ajax({
         type: "POST",
-        url: "/Home/AddOrEditItem/",
+        url: "/Calendar/AddOrEditItem/",
         data: JSON.stringify
             ({
 
@@ -86,7 +111,7 @@ function meetingSave() {
         },
         complete: function () {
             //$('#event_entry_modal').modal('hide');
-            window.location.href = "/Home/Index";
+            window.location.href = "/Calendar/GetCalendarEvents";
         }
     });
 
@@ -101,7 +126,7 @@ function getEvents(selectedItem) {
 
     $.ajax({
         type: "POST",
-        url: "/Home/GetCalendarItemEvent/",
+        url: "/Calendar/GetCalendarItemEvent/",
         data: JSON.stringify
             ({
                 id: id
@@ -125,7 +150,7 @@ function getEvents(selectedItem) {
             $('#bitisTarihi1').val(msg.end);
             $('#calendarid').val(msg.calendarid);
             $('#customerid').val(msg.customerid);
-            
+
         },
         complete: function () {
             $('#event_entry_modal2').modal({
@@ -143,29 +168,16 @@ function meetingUpdate(calendarid) {
     var _bitisTarihi = $("#bitisTarihi1").val();
     var _customerid = $('#customerid').val();
 
-    //if (title == "" || baslangicTarihi == "" || bitisTarihi == "") {
-
-    //    $(function () {
-    //        toastr.warning("Lütfen Tüm Alanları Giriniz.");
-    //        toastr.options = {
-    //            "timeOut": "10000",
-    //            "showDuration": "10000",
-    //            "progressBar": true
-    //        }
-    //    });
-    //    return false;
-    //}
-
     $.ajax({
         type: "POST",
-        url: "/Home/UpdateItemDate/",
+        url: "/Calendar/UpdateItemDate/",
         data: JSON.stringify
             ({
-                eventid: calendarid,
+                id: calendarid,
                 title: _title,
-                startDate: _baslangicTarihi,
-                endDate: _bitisTarihi,
-                customerid: _customerid
+                start: _baslangicTarihi,
+                end: _bitisTarihi,
+                Customerid: _customerid
 
             }),
 
@@ -182,13 +194,14 @@ function meetingUpdate(calendarid) {
         success: function () {
         },
         complete: function () {
-            window.location.href = "/Home/Index";
+            window.location.href = "/Calendar/GetCalendarEvents";
         }
     });
 
 }
 
 function meetingDelete(calendarid) {
+    var _id = calendarid;
     swal({
         buttons: {
             cancel: "İPTAL",
@@ -205,10 +218,10 @@ function meetingDelete(calendarid) {
 
                 $.ajax({
                     type: "POST",
-                    url: "/Home/DeleteItemDate",
+                    url: "/Calendar/DeleteItemDate",
                     data: JSON.stringify
                         ({
-                            eventid: calendarid,
+                            id: _id
 
                         }),
                     contentType: "application/json; charset=utf-8",
@@ -224,7 +237,7 @@ function meetingDelete(calendarid) {
                     },
                     complete: function () {
 
-                        window.location.href = "/Home/Index";
+                        window.location.href = "/Calendar/GetCalendarEvents";
                     }
                 });
 
@@ -236,7 +249,7 @@ function meetingDelete(calendarid) {
 function getCustomersList() {
     $.ajax({
         type: "POST",
-        url: "/Home/GetCustomersList/",
+        url: "/Calendar/GetCustomersList/",
         data: JSON.stringify
             ({
 
@@ -278,7 +291,7 @@ function getCustomersList() {
 function getCustomerSelectItem() {
     $.ajax({
         type: "POST",
-        url: "/Home/GetCustomersList/",
+        url: "/Calendar/GetCustomersList/",
         data: JSON.stringify
             ({
 

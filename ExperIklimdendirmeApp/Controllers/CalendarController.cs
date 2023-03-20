@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -15,49 +16,30 @@ namespace ExperIklimdendirmeApp.Controllers
     public class CalendarController : Controller
     {
         ProjectContext _context = new ProjectContext();
-        private SqlConnection connection = null;
-
-        private string connectionString = @"server=104.247.162.242\\MSSQLSERVER2019;database=fuatomay_exprDB1; user=fuatomay_admndb1; password=ANkara12345//.*;";
-        //private string connectionString = @"server=.;database=exprDB1; user=admndb1;password=ANkara12345//.*;";
         // GET: Calendar
-        public ActionResult Index()
+        public ActionResult GetCalendarEvents()
         {
             return View();
         }
         //Takvim Ekleme
-
-        public ActionResult GetCalendarEvents(string start,string end)
+        [HttpPost]
+        public JsonResult GetCalendarEvents(string start, string end)
         {
-            List<CalendarEvents> eventItems = new List<CalendarEvents>();
             try
             {
-                //SqlConnection con = new SqlConnection(@"server=104.247.162.242\\MSSQLSERVER2019;database=fuatomay_exprDB1; user=fuatomay_admndb1; password=ANkara12345//.*;");
-                SqlConnection con = new SqlConnection(@"server=.;database=exprDB1; user=admndb1;password=ANkara12345//.*;");
-                con.Open();
-                var query = $@"select * from CalendarEvents";
+                CalendarEventsViewModel res = new CalendarEventsViewModel();
 
-                SqlCommand command = new SqlCommand(query, con);
-                DataTable dt = new DataTable();
-                SqlDataAdapter da = new SqlDataAdapter(command);
-                da.Fill(dt);
+                var query = (from c in _context.CalendarEvents
+                             select new CalendarEventsViewModel
+                             {
+                                 id = int.Parse(c.id.ToString()),
+                                 title = c.title.ToString(),
+                                 start = DateTime.Parse(Convert.ToString(c.start)).ToString("yyyy-MM-dd"),
+                                 end = DateTime.Parse(Convert.ToString(c.end)).AddDays(1).ToString("yyyy-MM-dd"),
+                                 customerid = int.Parse(c.Customerid.ToString())
+                             }).ToList();
 
-                for (int i = 0; i < dt.Rows.Count; i++)
-                {
-                    DataRow dr = dt.Rows[i];
-                    CalendarEvents item = new CalendarEvents();
-
-                    item.id = int.Parse(dr["id"].ToString());
-                    item.title = dr["title"].ToString();
-                    item.start = DateTime.Parse(Convert.ToString(dr["start"])).ToString("yyyy-MM-dd HH:mm:ss");
-                    item.end = DateTime.Parse(Convert.ToString(dr["end"])).AddDays(1).ToString("yyyy-MM-dd HH:mm:ss");
-                    //item.start = string.Format("{0:s}", dr["start"]);
-                    //item.end = string.Format("{0:s}", dr["end"]);
-                    item.color = dr["color"].ToString();
-                    item.IsActive = 1;
-
-                    eventItems.Add(item);
-                }
-
+                return new JsonResult { Data = query, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
             }
             catch (Exception ex)
             {
@@ -65,18 +47,16 @@ namespace ExperIklimdendirmeApp.Controllers
                 throw ex;
             }
 
-            return Json(eventItems, JsonRequestBehavior.AllowGet);
+
         }
         public JsonResult AddOrEditItem(CalendarEvents item)
         {
-            ProjectContext connect = new ProjectContext();
             try
             {
                 CalendarEvents _event = new CalendarEvents();
                 _event.title = item.title;
                 _event.start = item.start;
                 _event.end = item.end;
-                _event.IsActive = 1;
                 _event.Customerid = item.Customerid;
                 _context.CalendarEvents.Add(_event);
                 _context.SaveChanges();
@@ -92,8 +72,6 @@ namespace ExperIklimdendirmeApp.Controllers
                 _context.SaveChanges();
                 #endregion
 
-
-
                 return Json(_event, JsonRequestBehavior.AllowGet);
 
 
@@ -103,35 +81,32 @@ namespace ExperIklimdendirmeApp.Controllers
                 throw ex;
             }
         }
-        public JsonResult UpdateItemDate(int? eventid, string startDate, string endDate, string title, int customerid)
+        public JsonResult UpdateItemDate(CalendarEvents item)
         {
             try
             {
-                SqlConnection con = new SqlConnection(@"server=104.247.162.242\\MSSQLSERVER2019;database=fuatomay_exprDB1; user=fuatomay_admndb1; password=ANkara12345//.*;");
-                //SqlConnection con = new SqlConnection(@"server=.;database=exprDB1; user=admndb1;password=ANkara12345//.*;");
-                con.Open();
-                List<SqlParameter> param = new List<SqlParameter>();
-                param.Add(new SqlParameter("@id", eventid));
-                param.Add(new SqlParameter("@startdate", string.Format("{0:s}", startDate)));
-                param.Add(new SqlParameter("@enddate", string.Format("{0:s}", endDate)));
-                param.Add(new SqlParameter("@title", title));
-                param.Add(new SqlParameter("@customerid", customerid));
-
-                var query = $@"update CalendarEvents set start=@startdate, [end]=@enddate, title=@title,Customerid =@customerid  where id =@id";
-
-                RunSqlCommand(query, param);
-
+                CalendarEvents updateevent = _context.CalendarEvents.Where(x => x.id == item.id).FirstOrDefault();
+                if(updateevent != null)
+                {
+                    updateevent.title = item.title;
+                    updateevent.start = item.start;
+                    updateevent.end = item.end;
+                    updateevent.Customerid = item.Customerid;
+                }
+                _context.CalendarEvents.Update(updateevent);
+                _context.SaveChanges();
 
                 #region UpdateLogs
-                //List<SqlParameter> param1 = new List<SqlParameter>();
-                //param1.Add(new SqlParameter("@id", eventid));
-                //param1.Add(new SqlParameter("@startdate", string.Format("{0:s}", startDate)));
-                //param1.Add(new SqlParameter("@enddate", string.Format("{0:s}", endDate)));
-                //param1.Add(new SqlParameter("@title", title));
-                //param1.Add(new SqlParameter("@customerid", customerid));
-                //var query1 = $@"update LogsCalendarEvent set start=@startdate, [end]=@enddate, title=@title,Customerid =@customerid  where id =@id";
-
-                //RunSqlCommand(query1, param1);
+                var updateeventlog = _context.LogsCalendarEvent.Where(x => x.id == item.id).FirstOrDefault();
+                if (updateevent != null)
+                {
+                    updateeventlog.title = item.title;
+                    updateeventlog.start = item.start;
+                    updateeventlog.end = item.end;
+                    updateeventlog.Customerid = item.Customerid;
+                }
+                _context.LogsCalendarEvent.Update(updateeventlog);
+                _context.SaveChanges();
                 #endregion
 
                 return Json(true, JsonRequestBehavior.AllowGet);
@@ -143,36 +118,21 @@ namespace ExperIklimdendirmeApp.Controllers
 
         }
 
-        public JsonResult DeleteItemDate(int? eventid)
+        public ActionResult DeleteItemDate(int id)
         {
+
             try
             {
+                var deleteid = _context.CalendarEvents.Where(x=>x.id == id).FirstOrDefault();
+                if (deleteid != null)
+                {
+                    _context.CalendarEvents.Remove(deleteid);
+                    _context.SaveChanges();
+                }
 
-                SqlConnection con = new SqlConnection(@"server=104.247.162.242\\MSSQLSERVER2019;database=fuatomay_exprDB1; user=fuatomay_admndb1; password=ANkara12345//.*;");
-                //SqlConnection con = new SqlConnection(@"server=.;database=exprDB1; user=admndb1;password=ANkara12345//.*;");
-                con.Open();
-                List<SqlParameter> param = new List<SqlParameter>();
-                param.Add(new SqlParameter("@id", eventid));
-
-                var query = $@"Delete  CalendarEvents where id =@id";
-
-                //SqlCommand command = new SqlCommand(query, con);
-                //CalendarEvents _update = _context.CalendarEvents.First(x => x.id == eventid);
-                //var query = from events in _context.CalendarEvents
-                //             where events.id == eventid
-                //             select events;
-
-                //foreach (var item in query)
-                //{
-                //    item.title = title;
-                //    item.start = startDate;
-                //    item.end = endDate;
-                //}
-
-                //_context.SaveChanges();
-
-                RunSqlCommand(query, param);
-
+                
+                                        
+                //_context.CalendarEvents.Remove();
                 return Json(true, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -217,35 +177,6 @@ namespace ExperIklimdendirmeApp.Controllers
 
         }
 
-
-        public void RunSqlCommand(string sql, List<SqlParameter> param = null)
-        {
-            try
-            {
-                OpenConnection();
-                SqlCommand cmd = connection.CreateCommand();
-                cmd.CommandText = sql;
-                if (param != null)
-                    cmd.Parameters.AddRange(param.ToArray());
-                cmd.CommandType = CommandType.Text;
-                cmd.ExecuteNonQuery();
-                cmd.Dispose();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-        public void OpenConnection()
-        {
-            connection = new SqlConnection(connectionString);
-
-            if (connection.State != ConnectionState.Open)
-                connection.Open();
-
-        }
-
-
         public JsonResult GetCustomersList()
         {
             List<CustomerListViewModel> customres = new List<CustomerListViewModel>();
@@ -254,7 +185,7 @@ namespace ExperIklimdendirmeApp.Controllers
                          select new CustomerListViewModel()
                          {
                              customerid = cus.Id,
-                             Name = cus.FirstName + cus.LastName
+                             Name = cus.FirstName +' '+ cus.LastName
                          }).ToList();
 
             if (query.Count != 0)
